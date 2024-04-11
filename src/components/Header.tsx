@@ -3,24 +3,24 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
+// import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { User } from '../types/types';
-import AppMenu from './AppMenu';
+// import AppMenu from './AppMenu';
 
 interface params{
     userData:User
 }
 
 export default function ButtonAppBar({userData}:params) {
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      setAnchorEl(event.currentTarget);
-    };
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
+    // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    //   setAnchorEl(event.currentTarget);
+    // };
+    // const handleClose = () => {
+    //   setAnchorEl(null);
+    // };
 
 
   return (
