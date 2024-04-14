@@ -49,7 +49,20 @@ await update(ref(db,'users/'+`${user.uid}/BotsList/${botIndex}/`),{'groupsList':
   }
 }
 
+async function updtaeGroupsFrom(updates:any) {
+  try{
+    const auth = getAuth()
+    const user = auth.currentUser
+    if(user){
+  const db = getDatabase()
+await update(ref(db,'users/'+`${user.uid}/`),{groupsFrom:updates})
+}else{return}
+  }catch(e){
+    console.log('error try update groupsFrom list:',e);
+    
+  }
+}
 
 
 
-export { firebaseApp,getUserData,updtaeUserData}
+export { firebaseApp,getUserData,updtaeUserData,updtaeGroupsFrom}

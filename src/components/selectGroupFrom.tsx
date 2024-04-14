@@ -1,48 +1,57 @@
 import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
-import {ListItemText} from '@mui/material'
+import { Autocomplete,Button,TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { UserDataAtom } from '../Atoms';
 
-
-
-interface data{
-    group:string
-    handleChange:(group:string)=>void
+interface data {
+  group: string;
+  handleChange: (group: string) => void;
 }
 
-export default function SelectGroupFrom({group,handleChange}:data) {
-  const [allGroupsFrom,setAllGroupsFrom] = useState<string[]>([])
-  const [userData] = useAtom(UserDataAtom)
-useEffect(()=>{
-  if(userData)setAllGroupsFrom(userData?.groupsFrom)
-},[])
+export default function SelectGroupFrom({ group, handleChange }: data) {
+  const [allGroupsFrom, setAllGroupsFrom] = useState<string[]>([]);
+  const [userData] = useAtom(UserDataAtom);
+  const [newV,setNewV] = useState(false)
+  const [newGroup,setNewGroup] = useState('')
 
+  useEffect(() => {
+    if (userData) {
+      setAllGroupsFrom(userData.groupsFrom)}
+  }, [userData]);
 
-    const handleChoose = (event: SelectChangeEvent) => {
-        handleChange(event.target.value as string);
-      };
+  const handleChoose = (event: any, newValue: string | null) => {
+    if(!event&&newValue){
+      handleChange(newValue)
+      setNewV(false)
+    }
+    else if (newValue) handleChange(newValue);
+
+  };
+  function handleNewInput(event: any) {
+    if (event && !allGroupsFrom.some(group => group.includes(event.target.value))) {
+      setNewV(true)
+      setNewGroup(event.target.value)
+    }
+    else{setNewV(false)}
+  }
+
   return (
     <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
-        <InputLabel id="select-label">קבוצה שולחת</InputLabel>
-        <Select
-          labelId="select-label"
-          id="select"
+        <Autocomplete
+        onInputChange={handleNewInput}
+          id="select-label"
+          options={allGroupsFrom}
           value={group}
-          label="group"
           onChange={handleChoose}
-        > {allGroupsFrom.map((groupToChoose,i) => (
-            <MenuItem  key={i} value={groupToChoose}>
-              <ListItemText secondary={groupToChoose} />
-            </MenuItem>
-          ))}
-
-        </Select>
+          freeSolo
+          renderInput={(params) => (
+            <TextField {...params} label="קבוצה שולחת" />
+          )}
+        />
+        {newV?<Button onClick={()=>handleChoose(false,newGroup)}  variant='outlined' >הוסף חדש</Button>:null}
       </FormControl>
     </Box>
   );
