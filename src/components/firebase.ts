@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { get, getDatabase, ref, update, onValue, off } from "firebase/database";
+import { get, getDatabase, ref, update, onValue, off, remove } from "firebase/database";
 import { Bot } from "../types/types";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -116,6 +116,7 @@ async function getQrCode(callback: (qrCode: string) => void,newBot: Bot) {
       timer = setTimeout(() => {
         off(qrRef, "value", listener);
         callback("err");
+        deleteBot(newBot.id)
       }, 40000);
       return () => {
         if (timer) {
@@ -165,6 +166,19 @@ async function addNewBot(newBot:Bot){
   }catch(e){
     console.log('error try add new bot:',e);
     
+  }
+}
+
+async function deleteBot(botId:string){
+  try{
+  const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      const db = getDatabase();
+  const botsRef = ref(db, `users/${user.uid}/BotsList/${botId}`)
+  await remove(botsRef)
+    }
+  }catch(e){console.log('error try delete bot:',e);
   }
 }
 
