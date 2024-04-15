@@ -1,5 +1,8 @@
 import {Menu,MenuItem } from "@mui/material";
+import { Link } from "react-router-dom";
 
+const linkStyle = {textDecoration: 'none',
+color: 'inherit',}
 
  interface params {
     anchorEl:null | HTMLElement,
@@ -21,8 +24,8 @@ const AppMenu = ({anchorEl,handleClose}:params) => {
       'aria-labelledby': 'basic-button',
     }}
   >
-    <MenuItem onClick={handleClose}>Profile</MenuItem>
-    <MenuItem onClick={handleClose}>My account</MenuItem>
+    <MenuItem onClick={handleClose}><Link style={linkStyle} to={'whatsAppBotSite'}> ניהול בוטים</Link></MenuItem>
+    <MenuItem onClick={handleClose}><Link style={linkStyle} to={'whatsAppBotSite/NewBot'}> New Bot</Link></MenuItem>
     <MenuItem onClick={handleClose}>Logout</MenuItem>
   </Menu>
   )

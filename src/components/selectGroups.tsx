@@ -24,6 +24,7 @@ const MenuProps = {
 };
 
 interface data {
+  allGroups:Array<string>;
   groupsExist: Array<string>;
   handleChangeGroups: (groups: Array<string>) => void;
 }
@@ -31,16 +32,15 @@ interface data {
 export default function SelectGroups({
   groupsExist,
   handleChangeGroups,
+  allGroups
 }: data) {
   const [groups, setGroups] = useState<string[]>([]);
-  const [allGroups, setAllGroups] = useState<string[]>([]);
   const [userData] = useAtom(UserDataAtom)
 
   useEffect(() => {
     if(userData){
-   setAllGroups(userData.groupsToSend)
     setGroups(groupsExist)}
-  }, []);
+  }, [userData]);
 
   const handleChange = (event: SelectChangeEvent<typeof groups>) => {
     const {
@@ -63,6 +63,7 @@ export default function SelectGroups({
         renderValue={(selected) => selected.join(", ")}
         MenuProps={MenuProps}
         sx={{ mb: 2 }}
+        size='small'
       >
         {allGroups.map((group, i) => (
           <MenuItem key={i} value={group}>

@@ -6,15 +6,21 @@ import { useAtom } from "jotai";
 import { UserDataAtom } from "../Atoms";
 import { getUserData } from "./firebase";
 
+
 const MainPage = () => {
   const [allData, setAllData] = useAtom(UserDataAtom);
   const [botsList, setBotsList] = useState<Array<string>>([]);
   const [index, setIndex] = useState<number | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [botChoose, setBotChoose] = useState<Bot | null>(null);
-
   useEffect(() => {
-    if (allData) setBotsList(allData.BotsList.map((b) => b.BotName));
+    if (allData){
+      if(allData.BotsList){
+        const lst =Object.keys(allData.BotsList)
+setBotsList(lst.map((key)=>{return allData.BotsList[key].BotName}))
+      }else{
+        setBotsList([])
+      }}
   }, [allData]);
 
   const handleClose = () => {
@@ -22,17 +28,17 @@ const MainPage = () => {
     setBotChoose(null);
   };
   const handleOpen = (BotName: string, index: number) => {
-    const bot = allData?.BotsList.filter((b) => b.BotName === BotName);
+    if(allData){
+    const bot = Object.values(allData.BotsList).filter((b)=> b.BotName === BotName);
     if (bot) {
       setBotChoose(bot[0]);
       setIndex(index);
       setOpen(true);
-    }
+    }}
   };
 
   async function reload() {
     const userD = await getUserData();
-
     setAllData(userD);
   }
 

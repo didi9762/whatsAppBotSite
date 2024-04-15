@@ -7,18 +7,16 @@ import { UserDataAtom } from '../Atoms';
 
 interface data {
   group: string;
+  allGroups:Array<string>;
   handleChange: (group: string) => void;
 }
 
-export default function SelectGroupFrom({ group, handleChange }: data) {
-  const [allGroupsFrom, setAllGroupsFrom] = useState<string[]>([]);
+export default function SelectGroupFrom({ group, handleChange,allGroups }: data) {
   const [userData] = useAtom(UserDataAtom);
   const [newV,setNewV] = useState(false)
   const [newGroup,setNewGroup] = useState('')
 
   useEffect(() => {
-    if (userData) {
-      setAllGroupsFrom(userData.groupsFrom)}
   }, [userData]);
 
   const handleChoose = (event: any, newValue: string | null) => {
@@ -30,7 +28,7 @@ export default function SelectGroupFrom({ group, handleChange }: data) {
 
   };
   function handleNewInput(event: any) {
-    if (event && !allGroupsFrom.some(group => group.includes(event.target.value))) {
+    if (event && !allGroups.some(group => group.includes(event.target.value))) {
       setNewV(true)
       setNewGroup(event.target.value)
     }
@@ -43,10 +41,12 @@ export default function SelectGroupFrom({ group, handleChange }: data) {
         <Autocomplete
         onInputChange={handleNewInput}
           id="select-label"
-          options={allGroupsFrom}
+          options={allGroups}
           value={group}
           onChange={handleChoose}
           freeSolo
+          size='small'
+          sx={{ mb: 2 }}
           renderInput={(params) => (
             <TextField {...params} label="קבוצה שולחת" />
           )}

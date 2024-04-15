@@ -6,9 +6,10 @@ import { TextField, Checkbox, Button } from "@mui/material";
 import SelectGroups from "./selectGroups";
 import SelectGroupFrom from "./selectGroupFrom";
 import { useEffect, useState } from "react";
-import { updtaeGroupsFrom, updtaeUserData } from "./firebase";
+import { updtaeUserData } from "./firebase";
 import { useAtom } from "jotai";
 import { UserDataAtom } from "../Atoms";
+import SelectBugsGroup from "./selevtBugsGroup";
 
 const style = {
   position: "absolute" as "absolute",
@@ -59,7 +60,7 @@ export default function BotModal({
 
   useEffect(() => {
     setNewData(data);
-  }, [open]);
+  }, [open,userD]);
 
   function handleChangeEnding(ending: string) {
     if (newData)
@@ -74,16 +75,25 @@ export default function BotModal({
     if (newData) setNewData({ ...newData, fromGroup: group });
   };
 
+  const handleChangeBugsGroup = (group:string)=>{
+    if(newData)setNewData({...newData,bugsGroup:group})
+  }
+  
+
   const handleSubmit = () => {
     if (newData?.BotName === "") {
       setTextErr(true);
       return;
     }
     if (newData && index !== null) {
-      if (userD && !userD.groupsFrom.includes(newData.fromGroup)) {
-        updtaeGroupsFrom([...userD.groupsFrom, newData.fromGroup]);
+      if (userD &&(!newData.allGroups||!newData.allGroups.includes(newData.fromGroup))&&newData.fromGroup!=='') {
+        if(newData.allGroups){       
+          newData.allGroups = [...newData.allGroups, newData.fromGroup]
+      }else{
+        newData.allGroups = [newData.fromGroup]
       }
-      updtaeUserData(index, newData);
+      }
+      updtaeUserData(newData.id, newData);
     }
     reload();
     handleClose();
@@ -139,12 +149,19 @@ export default function BotModal({
               placeholder={newData.Ending.replace(/[$]/g, "\n")}
             />
             <SelectGroups
-              groupsExist={newData.groupsList}
+            allGroups={newData.allGroups?newData.allGroups:[]}
+              groupsExist={newData.groupsList?newData.groupsList:[]}
               handleChangeGroups={handleChangeGroups}
             />
             <SelectGroupFrom
+            allGroups={newData.allGroups?newData.allGroups:[]}
               handleChange={handleChangeGroupFrom}
               group={newData.fromGroup}
+            />
+            <SelectBugsGroup
+            allGroups={newData.allGroups?newData.allGroups:[]}
+            group={newData.bugsGroup}
+            handleChange={handleChangeBugsGroup}
             />
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Typography lineHeight={2.5}>תצוגת לינק</Typography>
