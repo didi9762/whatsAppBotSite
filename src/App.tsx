@@ -5,7 +5,7 @@ import { UserDataAtom } from "./Atoms";
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LogIn from "./components/login";
 import MainPage from "./components/mainPage";
-import NewBot from "./components/NewBot";
+import NewBot from "./components/new bot/NewBot";
 import { useEffect } from "react";
 import { getUserData, listenToChanges } from "./components/firebase";
 

@@ -1,6 +1,6 @@
 import {  Alert, Box, Button, Modal, Typography } from "@mui/material"
 import QRCode from "react-qr-code"
-import { getMessage } from "./firebase"
+import { getMessage } from "../firebase"
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react"
 

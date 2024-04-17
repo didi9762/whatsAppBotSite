@@ -3,15 +3,16 @@ import FormControl from '@mui/material/FormControl';
 import { Autocomplete,Button,TextField } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
-import { UserDataAtom } from '../Atoms';
+import { UserDataAtom } from '../../Atoms';
 
 interface data {
+  checker:boolean
   group: string;
   allGroups:Array<string>;
   handleChange: (group: string) => void;
 }
 
-export default function SelectGroupFrom({ group, handleChange,allGroups }: data) {
+export default function SelectGroupFrom({ group, handleChange,allGroups,checker }: data) {
   const [userData] = useAtom(UserDataAtom);
   const [newV,setNewV] = useState(false)
   const [newGroup,setNewGroup] = useState('')
@@ -39,6 +40,7 @@ export default function SelectGroupFrom({ group, handleChange,allGroups }: data)
     <Box sx={{ minWidth: 120 }}>
       <FormControl fullWidth>
         <Autocomplete
+        disabled={checker}
         onInputChange={handleNewInput}
           id="select-label"
           options={allGroups}

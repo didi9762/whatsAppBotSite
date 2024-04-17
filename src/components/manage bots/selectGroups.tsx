@@ -10,7 +10,7 @@ import {
   OutlinedInput,
 } from "@mui/material";
 import { useAtom } from "jotai";
-import { UserDataAtom } from "../Atoms";
+import { UserDataAtom } from "../../Atoms";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

@@ -1,11 +1,11 @@
-import { Container, List, ListItem, Button, Typography } from "@mui/material";
+import { Container, List,  Button, Typography, Box } from "@mui/material";
 import { Bot } from "../types/types";
-import BotModal from "./BotModdal";
+import BotModal from "./manage bots/BotModdal";
 import { useEffect, useState } from "react";
 import { useAtom } from "jotai";
 import { UserDataAtom } from "../Atoms";
 import { getUserData } from "./firebase";
-
+import { useNavigate } from "react-router-dom";
 
 const MainPage = () => {
   const [allData, setAllData] = useAtom(UserDataAtom);
@@ -13,6 +13,8 @@ const MainPage = () => {
   const [index, setIndex] = useState<number | null>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [botChoose, setBotChoose] = useState<Bot | null>(null);
+const navigate = useNavigate()
+
   useEffect(() => {
     if (allData){
       if(allData.BotsList){
@@ -70,22 +72,26 @@ setBotsList(lst.map((key)=>{return allData.BotsList[key].BotName}))
               width: "100%",
             }}
           >
-            {botsList.map((bot, i) => {
+            {botsList.length!==0? botsList.map((bot, i) => {
               return (
-                <Button
-                sx={{height:30}}
-                  key={i}
-                  onClick={() => handleOpen(bot, i)}
-                  variant="text"
-                >
-                  <ListItem
-                    style={{ width: "100%", justifyContent: "flex-end" }}
+                
+
+                  <Button
+                  sx={{height:30}}
+                    key={i}
+                    onClick={() => handleOpen(bot, i)}
+                    variant="text"
                   >
-                    <Typography>{bot}</Typography>
-                  </ListItem>
-                </Button>
+                    <Typography textAlign={'center'}>{bot}</Typography>
+
+                  </Button>
+                
               );
-            })}
+            }):
+          <Box display={'flex'} justifyContent={'center'} alignContent={'center'}>
+            <Button onClick={()=>navigate('NewBot')} variant="text" sx={{textAlign:'center'}}>{'עדיין אין בוטים במערכת \n לחץ להוספת בוט ראשון'}</Button>
+          </Box>
+          }
           </List>
         </Container>
       )}

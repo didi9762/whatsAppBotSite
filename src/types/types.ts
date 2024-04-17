@@ -9,6 +9,7 @@ export type User = {
 
 
 
+
 export type Bot = {
     id:string,
     BotName:string,
@@ -18,7 +19,7 @@ export type Bot = {
     allGroups:Array<string>,
     fromGroup:string,
     linkView:boolean,
-    txt_Photo:boolean,
     online:boolean
+    isChecker:boolean
 }
 

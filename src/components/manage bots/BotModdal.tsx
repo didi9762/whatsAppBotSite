@@ -1,14 +1,14 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { Bot } from "../types/types";
+import { Bot } from "../../types/types";
 import { TextField, Checkbox, Button } from "@mui/material";
 import SelectGroups from "./selectGroups";
 import SelectGroupFrom from "./selectGroupFrom";
 import { useEffect, useState } from "react";
-import { updtaeUserData } from "./firebase";
+import { updtaeUserData } from "../firebase";
 import { useAtom } from "jotai";
-import { UserDataAtom } from "../Atoms";
+import { UserDataAtom } from "../../Atoms";
 import SelectBugsGroup from "./selevtBugsGroup";
 
 const style = {
@@ -110,7 +110,7 @@ export default function BotModal({
         >
           <Box sx={{ ...style,display: "flex", flexDirection: "column" }}>
             <Typography
-              mb={3}
+              mb={1}
               textAlign={"center"}
               id="modal-modal-title"
               variant="h6"
@@ -118,6 +118,14 @@ export default function BotModal({
             >
               פרטי הבוט
             </Typography>
+      {newData.isChecker&&<Typography
+              mb={2}
+              textAlign={"center"}
+              id="modal-modal-title"
+              component="h2"
+            >
+             בוט בדיקה
+            </Typography>}
             <TextField
               size={"small"}
               sx={TextFieldStyle}
@@ -139,6 +147,7 @@ export default function BotModal({
               placeholder={newData.BotName}
             />
             <TextField
+            disabled={newData.isChecker}
               multiline={true}
               rows={3}
               size={"small"}
@@ -154,6 +163,7 @@ export default function BotModal({
               handleChangeGroups={handleChangeGroups}
             />
             <SelectGroupFrom
+            checker={newData.isChecker}
             allGroups={newData.allGroups?newData.allGroups:[]}
               handleChange={handleChangeGroupFrom}
               group={newData.fromGroup}
@@ -166,18 +176,10 @@ export default function BotModal({
             <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
               <Typography lineHeight={2.5}>תצוגת לינק</Typography>
               <Checkbox
+              disabled={newData.isChecker}
                 checked={newData.linkView}
                 onClick={() =>
                   setNewData({ ...newData, linkView: !newData.linkView })
-                }
-              />
-            </Box>
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Typography lineHeight={2.5}>תצוגת תמונה וטקסט</Typography>
-              <Checkbox
-                checked={newData.txt_Photo}
-                onClick={() =>
-                  setNewData({ ...newData, txt_Photo: !newData.txt_Photo })
                 }
               />
             </Box>

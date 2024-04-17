@@ -1,6 +1,14 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { get, getDatabase, ref, update, onValue, off, remove } from "firebase/database";
+import {
+  get,
+  getDatabase,
+  ref,
+  update,
+  onValue,
+  off,
+  remove,
+} from "firebase/database";
 import { Bot } from "../types/types";
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -22,6 +30,20 @@ const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 
 // Initialize Firebase Authentication and get a reference to the service
+async function newUserUserName(userName: string) {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      const db = getDatabase();
+      const userRef = ref(db, "users/" + `${user.uid}/`);
+      await update(userRef, { userName: userName });
+    }
+  } catch (e) {
+    console.log("error try set new user userName");
+  }
+}
+
 async function getUserData() {
   const db = getDatabase();
   const auth = getAuth();
@@ -35,28 +57,28 @@ async function getUserData() {
   }
 }
 
-async function listenToChanges( callback:()=>void) {
-  let initial = true
+async function listenToChanges(callback: () => void) {
+  let initial = true;
   try {
     const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
       const db = getDatabase();
-    const query = ref(db, "users/" + `${user.uid}/`)
-    onValue(query,()=>{
-      if(initial){initial = false;return}
-      callback()
-    })
-    
+      const query = ref(db, "users/" + `${user.uid}/`);
+      onValue(query, () => {
+        if (initial) {
+          initial = false;
+          return;
+        }
+        callback();
+      });
     }
-
   } catch (e) {
     console.log("error when listening to changes:", e);
   }
 }
 
-
-async function updtaeUserData(botId:string, updates: any) {
+async function updtaeUserData(botId: string, updates: any) {
   try {
     const auth = getAuth();
     const user = auth.currentUser;
@@ -66,8 +88,11 @@ async function updtaeUserData(botId:string, updates: any) {
         ref(db, "users/" + `${user.uid}/BotsList/${botId}/`),
         updates
       );
-      if(updates.groupsList){
-      await update(ref(db, "users/" + `${user.uid}/BotsList/${botId}`), {'groupsList':updates.groupsList})}
+      if (updates.groupsList) {
+        await update(ref(db, "users/" + `${user.uid}/BotsList/${botId}`), {
+          groupsList: updates.groupsList,
+        });
+      }
     } else {
       return;
     }
@@ -93,7 +118,7 @@ async function updtaeGroupsFrom(botId: string, updates: any) {
   }
 }
 
-async function getQrCode(callback: (qrCode: string) => void,newBot: Bot) {
+async function getQrCode(callback: (qrCode: string) => void, newBot: Bot) {
   let timer: NodeJS.Timeout | null = null;
 
   try {
@@ -102,7 +127,7 @@ async function getQrCode(callback: (qrCode: string) => void,newBot: Bot) {
     if (user) {
       const db = getDatabase();
       const qrRef = ref(db, `users/${user.uid}/newBotQr`);
-      await addNewBot(newBot)
+      await addNewBot(newBot);
       const listener = onValue(qrRef, (snapshot) => {
         const qrCode = snapshot.val();
         if (!/^\d{10,}$/.test(qrCode) && qrCode !== "") {
@@ -116,7 +141,7 @@ async function getQrCode(callback: (qrCode: string) => void,newBot: Bot) {
       timer = setTimeout(() => {
         off(qrRef, "value", listener);
         callback("err");
-        deleteBot(newBot.id)
+        deleteBot(newBot.id);
       }, 40000);
       return () => {
         if (timer) {
@@ -144,7 +169,7 @@ async function getMessage(callback: (msg: string) => void) {
       onValue(msgRef, (snapshot) => {
         callback(snapshot.val());
         return () => {
-          off(msgRef,'value');
+          off(msgRef, "value");
         };
       });
     }
@@ -153,47 +178,49 @@ async function getMessage(callback: (msg: string) => void) {
   }
 }
 
-async function addNewBot(newBot:Bot){
-  try{
+async function addNewBot(newBot: Bot) {
+  try {
     const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
       const db = getDatabase();
-      const botsRef = ref(db, `users/${user.uid}/BotsList`)
-      const key = newBot.id
-     await update(botsRef,{[key]:newBot})
+      const botsRef = ref(db, `users/${user.uid}/BotsList`);
+      const key = newBot.id;
+      await update(botsRef, { [key]: newBot });
+      if (newBot.isChecker) {
+        await update(ref(db, `users/${user.uid}/`), { checkerBot: newBot.id });
+      }
     }
-  }catch(e){
-    console.log('error try add new bot:',e);
-    
+  } catch (e) {
+    console.log("error try add new bot:", e);
   }
 }
 
-async function deleteBot(botId:string){
-  try{
-  const auth = getAuth();
+async function deleteBot(botId: string) {
+  try {
+    const auth = getAuth();
     const user = auth.currentUser;
     if (user) {
       const db = getDatabase();
-  const botsRef = ref(db, `users/${user.uid}/BotsList/${botId}`)
-  await remove(botsRef)
+      const botsRef = ref(db, `users/${user.uid}/BotsList/${botId}`);
+      await remove(botsRef);
     }
-  }catch(e){console.log('error try delete bot:',e);
+  } catch (e) {
+    console.log("error try delete bot:", e);
   }
 }
 
-async function sendPhoneToGetQr(phone:string){
-  try{
-  const auth = getAuth();
-  const user = auth.currentUser;
-  if (user) {
-    const db = getDatabase();
-    const qrRef = ref(db, `users/${user.uid}/`);
-   await update(qrRef,{'newBotQr':phone})
-  }
-}catch(e){
-    console.log('error try send phone number to get qr:',e);
-    
+async function sendPhoneToGetQr(phone: string) {
+  try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+    if (user) {
+      const db = getDatabase();
+      const qrRef = ref(db, `users/${user.uid}/`);
+      await update(qrRef, { newBotQr: phone });
+    }
+  } catch (e) {
+    console.log("error try send phone number to get qr:", e);
   }
 }
 
@@ -203,8 +230,9 @@ export {
   sendPhoneToGetQr,
   getMessage,
   firebaseApp,
+  newUserUserName,
   getUserData,
   updtaeUserData,
   updtaeGroupsFrom,
-  listenToChanges
+  listenToChanges,
 };
